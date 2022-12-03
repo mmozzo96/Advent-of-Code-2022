@@ -1,6 +1,8 @@
 import * as fs from "fs";
 
-const Data: string[] = fs.readFileSync("Day1/Day1Data.txt", "utf8").split(/\r?\n/);
+const Data: string[] = fs
+  .readFileSync("Day1/Day1Data.txt", "utf8")
+  .split(/\r?\n/);
 
 const numbers: number[] = Data.map((el) => +el);
 const added: number[] = [];
@@ -26,11 +28,22 @@ function findIdxMax(array: number[]): number {
   return maxIdx;
 }
 
-let result: number = 0;
-for (let i = 0; i < 1; i++) {
-    const maxIdx = findIdxMax(added)
-    result += added[maxIdx]
-    added.splice(maxIdx, 1)
+function solution(array: number[], numberOfHigherElements: number) {
+  if (array.length < numberOfHigherElements)
+    throw new Error(
+      "Number of bigger elements to add should not exceed array dimension"
+    );
+  const arrayCopy = [...array]
+  let result: number = 0;
+  for (let i = 0; i < numberOfHigherElements; i++) {
+    const maxIdx = findIdxMax(arrayCopy);
+    result += arrayCopy[maxIdx];
+    arrayCopy.splice(maxIdx, 1);
+  }
+
+  return result
 }
 
-console.log(result);
+
+console.log(solution(added, 1));
+console.log(solution(added, 3));
