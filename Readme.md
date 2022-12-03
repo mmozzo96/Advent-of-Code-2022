@@ -2,7 +2,7 @@
 
 ## This is the repository with my solutions for AoC 2022
 
-If you want to give the callenges a try visit `https://adventofcode.com/2022`
+If you want to give the callenges a try visit [adventofcode2022.com](https://adventofcode.com/2022)
 
 To run the files:
 
