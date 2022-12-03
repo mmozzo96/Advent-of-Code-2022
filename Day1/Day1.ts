@@ -1,7 +1,8 @@
 import * as fs from "fs";
+import path from "path";
 
 const Data: string[] = fs
-  .readFileSync("Day1/Day1Data.txt", "utf8")
+  .readFileSync(path.join(__dirname, "Day1Data.txt"), "utf8")
   .split(/\r?\n/);
 
 const numbers: number[] = Data.map((el) => +el);

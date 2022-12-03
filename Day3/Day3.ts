@@ -1,6 +1,9 @@
 import * as fs from "fs";
+import path from "path";
 
-const Data: string[] = fs.readFileSync("Day3/Day3Data.txt", "utf8").split(/\r?\n/);
+const Data: string[] = fs
+  .readFileSync(path.join(__dirname, "Day3Data.txt"), "utf8")
+  .split(/\r?\n/);
 
 function findBadSortedItem(backpack: string): string {
   if (backpack.length % 2 !== 0)
@@ -60,10 +63,12 @@ function findBadge(
   return badge;
 }
 
-let solution2: number = 0
+let solution2: number = 0;
 
-for(let i=0; i<Data.length; i+=3) {
-    solution2 += assignNumberToLetter(findBadge(Data[i], Data[i+1], Data[i+2]))
+for (let i = 0; i < Data.length; i += 3) {
+  solution2 += assignNumberToLetter(
+    findBadge(Data[i], Data[i + 1], Data[i + 2])
+  );
 }
 
-console.log(solution2)
+console.log(solution2);
