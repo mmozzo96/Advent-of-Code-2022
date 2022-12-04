@@ -25,3 +25,17 @@ const result = numberizedData
   .reduce((f: number, s: number) => f + s);
 
 console.log(result);
+
+const result2 = numberizedData
+  .map((pair: number[][]) => {
+    const doOverlap: boolean = 
+        (pair[0][0]>=pair[1][0] && pair[0][0]<=pair[1][1]) ||
+        (pair[0][1]>=pair[1][0] && pair[0][1]<=pair[1][1]) ||
+        (pair[1][0]>=pair[0][0] && pair[1][0]<=pair[0][1]) ||
+        (pair[1][1]>=pair[0][0] && pair[1][1]<=pair[0][1])
+    const numberizedDoOverlap: number = doOverlap ? 1 : 0;
+    return numberizedDoOverlap;
+  })
+  .reduce((f: number, s: number) => f + s);
+
+console.log(result2);
