@@ -31,23 +31,43 @@ function readData2(data2Line: string): number[] {
   return result;
 }
 
-function data2MovesSetApply(data2Line: string) {
-  const [howMany, from, to]: number[] = readData2(data2Line);
-  if (data1Rows[from].length < howMany)
-    throw new Error("you can move more than the cotained elements");
+const data1RowsPart1: string[][] = JSON.parse(JSON.stringify(data1Rows));
 
-  const partToMove: string[] = data1Rows[from].splice(-howMany, howMany);
-  partToMove.reverse();
+function data2MovesSetApplySolution1(rows: string[][], data2: string[]) {
+  data2.map((data2Line: string) => {
+    const [howMany, from, to]: number[] = readData2(data2Line);
+    if (rows[from].length < howMany)
+      throw new Error("you can move more than the cotained elements");
 
-  data1Rows[to].push(...partToMove);
+    const partToMove: string[] = rows[from].splice(-howMany, howMany);
+    partToMove.reverse();
+
+    rows[to].push(...partToMove);
+  });
+
+  return rows;
 }
 
 function solution(data1RowsSolved: string[][]) {
-   console.log(data1RowsSolved.map(row=>row[row.length-1]).join(''))
+  console.log(data1RowsSolved.map((row) => row[row.length - 1]).join(""));
 }
 
-data2.map((line:string) => data2MovesSetApply(line))
+solution(data2MovesSetApplySolution1(data1RowsPart1, data2));
 
-solution(data1Rows)
+const data1RowsPart2: string[][] = JSON.parse(JSON.stringify(data1Rows));
 
+function data2MovesSetApplySolution2(rows: string[][], data2: string[]) {
+  data2.map((data2Line: string) => {
+    const [howMany, from, to]: number[] = readData2(data2Line);
+    if (rows[from].length < howMany)
+      throw new Error("you can move more than the cotained elements");
 
+    const partToMove: string[] = rows[from].splice(-howMany, howMany);
+
+    rows[to].push(...partToMove);
+  });
+
+  return rows;
+}
+
+solution(data2MovesSetApplySolution2(data1RowsPart2, data2));
