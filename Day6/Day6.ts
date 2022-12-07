@@ -11,6 +11,11 @@ let idx: number = -1;
 let skipNext: boolean = false;
 let skipTwoNext: boolean = false;
 
+function getHowManyLetters(str: string, letter: string): number|undefined {
+    const regex: RegExp = new RegExp(`${letter}`, "g")
+    return str.match(regex)?.length
+}
+
 while (!isFound) {
   idx++;
   if (skipNext) {
@@ -25,16 +30,16 @@ while (!isFound) {
 
   const str: string = Data.slice(idx, idx + 4);
 
-  const howManyFirstLetter = str.match(new RegExp(`${str[0]}`, "g"))?.length;
+  const howManyFirstLetter = getHowManyLetters(str, str[0])
   if (howManyFirstLetter && howManyFirstLetter > 1) continue;
 
-  const howManySecondLetter = str.match(new RegExp(`${str[1]}`, "g"))?.length;
+  const howManySecondLetter = getHowManyLetters(str, str[1])
   if (howManySecondLetter && howManySecondLetter > 1) {
     skipNext = true;
     continue;
   }
 
-  const howManyThirdLetter = str.match(new RegExp(`${str[2]}`, "g"))?.length;
+  const howManyThirdLetter = getHowManyLetters(str, str[2])
   if (howManyThirdLetter && howManyThirdLetter > 1) {
     skipTwoNext = true;
     continue;
@@ -46,3 +51,28 @@ while (!isFound) {
 const solution: number = idx +4 
 
 console.log(solution);
+
+
+// --- Part 2 ---
+
+isFound = false
+idx = -1
+
+whileLoop: while (!isFound) {
+    idx++;
+  
+    const str: string = Data.slice(idx, idx + 14);
+  
+    for(let i=0;i<str.length-1;i++) {
+        const howManyLetters = getHowManyLetters(str, str[i])
+        if(howManyLetters && howManyLetters > 1) {
+            continue whileLoop
+        }
+    }
+
+    isFound = true
+}
+
+const solution2 = idx+14
+
+console.log(solution2)
