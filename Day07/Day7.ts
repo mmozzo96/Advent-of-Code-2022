@@ -72,33 +72,33 @@ function directoriesStructure(Data: string[]) {
 
 const dirStructure = directoriesStructure(Data);
 
-function getDirSize(dir: any) {
-  let dirsSize: number[] = [];
+function getDirSize(dir: any, name: string) {
+  let dirsSize: any = {};
 
-  function getSingleDirSize(dir: any): number {
+  function getSingleDirSize(dir: any, name: string): number {
     let singleDirSize: number = 0;
 
-    for (const value of Object.values(dir)) {
+    for (const [key, value] of Object.entries(dir)) {
       if (typeof value === "number") {
         singleDirSize += value;
       } else if (typeof value === "object") {
-        singleDirSize += getSingleDirSize(value);
+        singleDirSize += getSingleDirSize(value, name + "/" + key);
       } else throw new Error("a problem came up while sizing dirs");
     }
 
-    dirsSize.push(singleDirSize);
+    dirsSize[name !== "" ? name : "/"] = singleDirSize;
 
     return singleDirSize;
   }
 
-  getSingleDirSize(dir);
+  getSingleDirSize(dir, name);
 
   return dirsSize;
 }
 
-const dirsSize = getDirSize(dirStructure);
+const dirsSize = getDirSize(dirStructure, "");
 
-const solution1 = dirsSize.reduce((soFar, next) => {
+const solution1 = Object.values(dirsSize).reduce((soFar, next) => {
   const sF = <number>soFar;
   const n = <number>next;
 
@@ -108,12 +108,12 @@ const solution1 = dirsSize.reduce((soFar, next) => {
 
 console.log(solution1);
 
-const spaceToBeFreed =
-  30000000 - (70000000 - <number>dirsSize[dirsSize.length - 1]);
+const spaceToBeFreed = 30000000 - (70000000 - <number>dirsSize["/"]);
 
 let solution2: number = 70000000;
 
-dirsSize.forEach((singleDirSize) => {
+Object.values(dirsSize).forEach((singleDirSizeUnknown) => {
+  const singleDirSize: number = <number>singleDirSizeUnknown;
   if (singleDirSize > spaceToBeFreed && singleDirSize < solution2)
     solution2 = singleDirSize;
 });
