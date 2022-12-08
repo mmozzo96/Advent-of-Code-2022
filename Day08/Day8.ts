@@ -6,7 +6,7 @@ const Data: number[][] = fs
   .split(/\r?\n/)
   .map((line) => line.split("").map((element) => +element));
 
-enum directionIsVisible {
+enum directions {
   TOP = "top",
   RIGHT = "right",
   BOTTOM = "bottom",
@@ -22,40 +22,37 @@ function getVisibility(partialView: number[], tree: number): boolean {
 function checkIsVisible(
   data: number[][],
   position: number[],
-  direction: directionIsVisible
+  direction: directions
 ): boolean {
   const [row, column]: number[] = position;
   const tree = data[row][column];
-  let isVisible: boolean = false
+  let isVisible: boolean = false;
 
   switch (direction) {
-    case directionIsVisible.LEFT:
+    case directions.LEFT:
+      isVisible = getVisibility(data[row].slice(0, column), tree);
+      break;
+    case directions.RIGHT:
       isVisible = getVisibility(
-        data[row].slice(0, column),
+        data[row].slice(column + 1, data[row].length),
         tree
       );
       break;
-    case directionIsVisible.RIGHT:
+    case directions.TOP:
       isVisible = getVisibility(
-        data[row].slice(column+1, data[row].length),
+        data.map((line) => line[column]).slice(0, row),
         tree
       );
       break;
-    case directionIsVisible.TOP:
+    case directions.BOTTOM:
       isVisible = getVisibility(
-        data.map(line=>line[column]).slice(0, row),
-        tree
-      );
-      break;
-    case directionIsVisible.BOTTOM:
-      isVisible = getVisibility(
-        data.map(line=>line[column]).slice(row+1, data.length),
+        data.map((line) => line[column]).slice(row + 1, data.length),
         tree
       );
       break;
   }
 
-  return isVisible
+  return isVisible;
 }
 
 function numberOfVisibleTrees(data: number[][]): number {
@@ -70,28 +67,111 @@ function numberOfVisibleTrees(data: number[][]): number {
     }
 
     treeLoop: for (let treeIdx = 0; treeIdx < line.length; treeIdx++) {
-
       if (treeIdx === 0 || treeIdx === line.length - 1) {
         visible++;
         continue treeLoop;
       }
 
-      for(const dirKey of ['TOP', 'RIGHT', 'BOTTOM', 'LEFT']) {
-        const direction = directionIsVisible[dirKey as ('TOP'|'RIGHT'|'BOTTOM'|'LEFT')]
-        const isVisible = checkIsVisible(data, [lineIdx, treeIdx], direction)
-        if(isVisible) {
-          visible++
-          continue treeLoop
+      for (const dirKey of ["TOP", "RIGHT", "BOTTOM", "LEFT"]) {
+        const direction =
+          directions[dirKey as "TOP" | "RIGHT" | "BOTTOM" | "LEFT"];
+        const isVisible = checkIsVisible(data, [lineIdx, treeIdx], direction);
+        if (isVisible) {
+          visible++;
+          continue treeLoop;
         }
       }
     }
-    // console.log(visible)
   }
 
-  return visible
+  return visible;
 }
 
-const solution1: number = numberOfVisibleTrees(Data)
+const solution1: number = numberOfVisibleTrees(Data);
 
-// console.log(Data)
-console.log(solution1)
+console.log(solution1);
+
+function getScenario(partialView: number[], tree: number): number {
+  for (let idx = 0; idx < partialView.length; idx++) {
+    if (partialView[idx] >= tree) return idx + 1;
+  }
+  return partialView.length;
+}
+
+function getScenarioOneDirection(
+  data: number[][],
+  position: number[],
+  direction: directions
+): number {
+  const [row, column]: number[] = position;
+  const tree = data[row][column];
+  let scenario: number = 0;
+
+  switch (direction) {
+    case directions.LEFT:
+      scenario = getScenario(data[row].slice(0, column).reverse(), tree);
+      break;
+    case directions.RIGHT:
+      scenario = getScenario(
+        data[row].slice(column + 1, data[row].length),
+        tree
+      );
+      break;
+    case directions.TOP:
+      scenario = getScenario(
+        data
+          .map((line) => line[column])
+          .slice(0, row)
+          .reverse(),
+        tree
+      );
+      break;
+    case directions.BOTTOM:
+      scenario = getScenario(
+        data.map((line) => line[column]).slice(row + 1, data.length),
+        tree
+      );
+      break;
+  }
+
+  return scenario;
+}
+
+function getMoreScenic(data: number[][]) {
+  let moreScenic: number = 0;
+  let scenario: number = 1;
+
+  lineLoop: for (let lineIdx = 0; lineIdx < data.length; lineIdx++) {
+    const line: number[] = data[lineIdx];
+
+    if (lineIdx === 0 || lineIdx === data.length - 1) {
+      continue lineLoop;
+    }
+
+    treeLoop: for (let treeIdx = 0; treeIdx < line.length; treeIdx++) {
+      if (treeIdx === 0 || treeIdx === line.length - 1) {
+        continue treeLoop;
+      }
+
+      scenario = 1;
+
+      for (const dirKey of ["TOP", "RIGHT", "BOTTOM", "LEFT"]) {
+        const direction =
+          directions[dirKey as "TOP" | "RIGHT" | "BOTTOM" | "LEFT"];
+        scenario *= getScenarioOneDirection(
+          data,
+          [lineIdx, treeIdx],
+          direction
+        );
+      }
+
+      if (scenario > moreScenic) moreScenic = scenario;
+    }
+  }
+
+  return moreScenic;
+}
+
+const solution2 = getMoreScenic(Data);
+
+console.log(solution2);
