@@ -78,7 +78,7 @@ function moveHead(head: position, instruction: instruction): position[] {
 
   for (let i = 1; i <= value; i++) {
     head[headVariableToChange] += increaseDecrease * 1;
-    positionDuringMovement.push({...head});
+    positionDuringMovement.push({ ...head });
   }
 
   return positionDuringMovement;
@@ -90,35 +90,29 @@ function distance(x1: number, x2: number): number {
 
 function moveTail(tail: position, head: position): position {
   // change "tail" position and return "tail"
-  if(distance(tail.x, head.x)<2 && distance(tail.y, head.y)<2) return tail
+  if (distance(tail.x, head.x) < 2 && distance(tail.y, head.y) < 2) return tail;
 
-  if(distance(tail.y, head.y) === 0) {
-    if(tail.x>head.x) tail.x--
-    else if(tail.x<head.x) tail.x ++
-  } 
-  else if(distance(tail.x, head.x) === 0) {
-    if(tail.y>head.y) tail.y--
-    else if(tail.y<head.y) tail.y ++
-  }
-  else if(tail.x<head.x && tail.y<head.y) {
-    tail.x++
-    tail.y++
-  }
-  else if(tail.x<head.x && tail.y>head.y) {
-    tail.x++
-    tail.y--
-  }
-  else if(tail.x>head.x && tail.y<head.y) {
-    tail.x--
-    tail.y++
-  }
-  else if(tail.x>head.x && tail.y>head.y) {
-    tail.x--
-    tail.y--
+  if (distance(tail.y, head.y) === 0) {
+    if (tail.x > head.x) tail.x--;
+    else if (tail.x < head.x) tail.x++;
+  } else if (distance(tail.x, head.x) === 0) {
+    if (tail.y > head.y) tail.y--;
+    else if (tail.y < head.y) tail.y++;
+  } else if (tail.x < head.x && tail.y < head.y) {
+    tail.x++;
+    tail.y++;
+  } else if (tail.x < head.x && tail.y > head.y) {
+    tail.x++;
+    tail.y--;
+  } else if (tail.x > head.x && tail.y < head.y) {
+    tail.x--;
+    tail.y++;
+  } else if (tail.x > head.x && tail.y > head.y) {
+    tail.x--;
+    tail.y--;
   }
 
-  return tail
-  
+  return tail;
 }
 
 function solution1(data: string[]) {
@@ -128,27 +122,63 @@ function solution1(data: string[]) {
   };
   let Tail: position = {
     x: 0,
-    y: 0
-  }
-  let TailPositions: any = {}
+    y: 0,
+  };
+  let TailPositions: any = {};
 
-  data.forEach(instr => {
-    moveHead(Head, readInstructions(instr)).forEach((headMovement: position) => {
-      moveTail(Tail, headMovement)
-      if(!TailPositions[Tail.x]) TailPositions[Tail.x] = []
-      if(!TailPositions[Tail.x].includes(Tail.y)) TailPositions[Tail.x].push(Tail.y)
-    })
-  })
+  data.forEach((instr) => {
+    moveHead(Head, readInstructions(instr)).forEach(
+      (headMovement: position) => {
+        moveTail(Tail, headMovement);
+        if (!TailPositions[Tail.x]) TailPositions[Tail.x] = [];
+        if (!TailPositions[Tail.x].includes(Tail.y))
+          TailPositions[Tail.x].push(Tail.y);
+      }
+    );
+  });
 
-  let solution: number = 0
-  Object.values(TailPositions).forEach(Yarray => {
-    solution += (<number[]>Yarray).length
-  })
+  let solution: number = 0;
+  Object.values(TailPositions).forEach((Yarray) => {
+    solution += (<number[]>Yarray).length;
+  });
 
-  return solution
+  return solution;
 }
 
 console.log(solution1(Data))
 
+function solution2(data: string[]) {
+  let Head: position = {
+    x: 0,
+    y: 0,
+  };
+  let Tails: position[] = new Array(9).fill({
+    x: 0,
+    y: 0,
+  });
+  let TailPositions: any = {};
 
+  data.forEach((instr) => {
+    moveHead(Head, readInstructions(instr)).forEach(
+      (headMovement: position) => {
+        Tails[0] = moveTail({ ...Tails[0] }, headMovement);
+        for (let tail = 1; tail < Tails.length; tail++) {
+          Tails[tail] = moveTail({ ...Tails[tail] }, { ...Tails[tail - 1] });
+        }
+        const lastTail = Tails[Tails.length-1]
+        if (!TailPositions[lastTail.x]) TailPositions[lastTail.x] = [];
+        if (!TailPositions[lastTail.x].includes(lastTail.y))
+          TailPositions[lastTail.x].push(lastTail.y);
+      }
+    );
+  });
 
+  let solution: number = 0;
+  Object.values(TailPositions).forEach((Yarray) => {
+    solution += (<number[]>Yarray).length;
+  });
+
+  return solution;
+}
+
+console.log(solution2(Data))
